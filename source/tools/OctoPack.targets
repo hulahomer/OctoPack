@@ -33,6 +33,7 @@
     <OctoPackProjectName Condition="'$(OctoPackProjectName)' == ''">$(MSBuildProjectName)</OctoPackProjectName>
     <OctoPackIgnoreNonRootScripts Condition="'$(OctoPackIgnoreNonRootScripts)' == ''">false</OctoPackIgnoreNonRootScripts>
     <OctoPackAppConfigFileOverride Condition="'$(OctoPackAppConfigFileOverride)' == ''">$(TargetDir)$(TargetFileName).config</OctoPackAppConfigFileOverride>
+    <OctoPackRemovePackageFromBin Condition="'$(OctoPackRemovePackageFromBin)' == ''">false</OctoPackRemovePackageFromBin>
   </PropertyGroup>
 
   <!-- 
@@ -79,6 +80,7 @@
       IncludeTypeScriptSourceFiles="$(OctoPackIncludeTypeScriptSourceFiles)"
       IgnoreNonRootScripts="$(OctoPackIgnoreNonRootScripts)"
       AppConfigFile="$(OctoPackAppConfigFileOverride)"
+      RemovePackageFromBin="$(OctoPackRemovePackageFromBin)"
       >
       <Output TaskParameter="Packages" ItemName="OctoPackBuiltPackages" />
       <Output TaskParameter="NuGetExePath" PropertyName="OctoPackNuGetExePath" />

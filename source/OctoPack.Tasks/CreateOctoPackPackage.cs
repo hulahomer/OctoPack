@@ -122,6 +122,11 @@ namespace OctoPack.Tasks
         /// </summary>
         public bool IgnoreNonRootScripts { get; set; }
 
+        /// <summary>
+        /// Remove the nupkg file that is put in your bin folder when built
+        /// </summary>
+        public bool RemovePackageFromBin { get; set; }
+
         public override bool Execute()
         {
             try
@@ -187,6 +192,8 @@ namespace OctoPack.Tasks
                     );
 
                 CopyBuiltPackages(octopacked);
+
+                RemoveFiles(octopacked, OutDir);
 
                 LogMessage("OctoPack successful");
 
@@ -543,6 +550,17 @@ namespace OctoPack.Tasks
             LogMessage("Packages have been copied to: " + OutDir, MessageImportance.Low);
 
             Packages = packageFiles.ToArray();
+        }
+
+        private void RemoveFiles(string packageOutput, string outputDirectory)
+        {
+            if (!RemovePackageFromBin) return;
+
+            foreach (var file in fileSystem.EnumerateFiles(packageOutput, "*.nupkg"))
+            {
+                LogMessage("Removing nupkg: " + file + " from bin folder");
+                File.Delete(Path.Combine(outputDirectory, file));
+            }
         }
 
         private static TaskItem CreateTaskItemFromPackage(string packageFile)
