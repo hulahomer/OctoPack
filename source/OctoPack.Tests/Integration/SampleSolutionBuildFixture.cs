@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using NUnit.Framework;
+using OctoPack.Tasks.Util;
 
 namespace OctoPack.Tests.Integration
 {
@@ -243,6 +244,21 @@ namespace OctoPack.Tests.Integration
                     "bin\\Sample.WebAppWithSpecAndCustomContentEnforced.pdb",
                     "web.config",
                     "SomeFiles\\Foo.css"));
+        }
+
+        [Test]
+        public void ShouldAllowRemoveFilesFromBin()
+        {
+            MsBuild("Sample.ConsoleApp\\Sample.ConsoleApp.csproj /p:RunOctoPack=true /p:OctoPackPackageVersion=1.0.9 /p:Configuration=Release /p:RemovePackageFromBin=true /v:m");
+
+            AssertPackage(@"Sample.ConsoleApp\obj\octopacked\Sample.ConsoleApp.1.0.9.nupkg",
+                pkg => pkg.AssertContents(
+                    "Sample.ConsoleApp.exe",
+                    "Sample.ConsoleApp.exe.config",
+                    "Sample.ConsoleApp.pdb"));
+
+            var fileSystem = new OctopusPhysicalFileSystem();
+            Assert.False(fileSystem.FileExists("bin\\Sample.ConsoleApp.1.0.9.nupkg"));
         }
     }
 }
