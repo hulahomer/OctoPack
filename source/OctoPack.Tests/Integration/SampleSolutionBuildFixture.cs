@@ -249,7 +249,7 @@ namespace OctoPack.Tests.Integration
         [Test]
         public void ShouldAllowRemoveFilesFromBin()
         {
-            MsBuild("Sample.ConsoleApp\\Sample.ConsoleApp.csproj /p:RunOctoPack=true /p:OctoPackPackageVersion=1.0.9 /p:Configuration=Release /p:RemovePackageFromBin=true /v:m");
+            MsBuild("Sample.ConsoleApp\\Sample.ConsoleApp.csproj /p:RunOctoPack=true /p:OctoPackPackageVersion=1.0.9 /p:Configuration=Release /p:OctoPackPublishPackageToFileShare=octopackagesfolder  /v:m");
 
             AssertPackage(@"Sample.ConsoleApp\obj\octopacked\Sample.ConsoleApp.1.0.9.nupkg",
                 pkg => pkg.AssertContents(
@@ -258,7 +258,14 @@ namespace OctoPack.Tests.Integration
                     "Sample.ConsoleApp.pdb"));
 
             var fileSystem = new OctopusPhysicalFileSystem();
-            Assert.False(fileSystem.FileExists("bin\\Sample.ConsoleApp.1.0.9.nupkg"));
+            Assert.False(fileSystem.FileExists(@"Sample.ConsoleApp\obj\octopacked\Sample.ConsoleApp.1.0.9.nupkg"));
+        }
+
+        [Test]
+        public void ShouldWarnWhenBothFlagsNotSet()
+        {
+            MsBuild("Sample.ConsoleApp\\Sample.ConsoleApp.csproj /p:RunOctoPack=true /p:OctoPackPackageVersion=1.0.9 /p:Configuration=Release /p:OctoPackRemovePackageFromBin=true /p:OctoPackPublishPackageToFileShare=packagefolder /v:m", 
+                output => Assert.That(output, Is.StringContaining("OctoPack warning OCTODELETE: The flag for removing files from the bin folder is set but publishing to TeamCity or FileShare has not been set so the packages will be removed")));
         }
     }
 }

@@ -556,6 +556,11 @@ namespace OctoPack.Tasks
         {
             if (!RemovePackageFromBin) return;
 
+            if (!PublishPackagesToTeamCity)
+            {
+                LogWarning("OCTODELETE", "The flag for removing files from the bin folder is set but publishing to TeamCity has not been set");
+            }
+
             foreach (var file in fileSystem.EnumerateFiles(packageOutput, "*.nupkg"))
             {
                 LogMessage("Removing nupkg: " + file + " from bin folder");
